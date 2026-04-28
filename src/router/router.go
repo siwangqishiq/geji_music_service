@@ -16,19 +16,15 @@ func installCommonRouter(r *gin.Engine) {
 	r.GET("/version", func(c *gin.Context) {
 		util.Success(c, gin.H{"version": config.VERSION})
 	})
-
-	r.GET("/hello", controller.Hello)
 }
 
 // 需要鉴权的url
 func installApiRouter(r *gin.Engine) {
 	util.Logi("install api router")
+
 	api := r.Group("/api")
 	api.Use(middleware.AuthMiddleware())
-
-	{
-		// api.GET("/statistic", controller.GetInspectStatistic) //巡查总数据统计
-	}
+	api.GET("/search", controller.Search) //巡查总数据统计
 }
 
 func InitRouter() *gin.Engine {

@@ -1,7 +1,7 @@
 package util
 
 import (
-	"net/http"
+	"geji/data"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,13 +37,13 @@ func FailedResp(code int, errMsg string) Response {
 }
 
 func Success(c *gin.Context, data any) {
-	c.JSON(http.StatusOK, SuccessResp(data))
+	c.JSON(200, SuccessResp(data))
 }
 
 func SuccessWithMsg(c *gin.Context, data any, msg string) {
-	c.JSON(http.StatusOK, SuccessRespWithMsg(data, msg))
+	c.JSON(200, SuccessRespWithMsg(data, msg))
 }
 
 func Fail(c *gin.Context, errCode int, msg string) {
-	c.JSON(http.StatusOK, FailedResp(errCode, msg))
+	c.JSON(data.HTTP_CODE_SUCCESS, FailedResp(errCode, msg))
 }
