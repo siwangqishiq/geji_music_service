@@ -2,8 +2,8 @@ package controller
 
 import (
 	"geji/data"
+	"geji/service"
 	"geji/util"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -26,14 +26,18 @@ func Search(c *gin.Context) {
 		return
 	}
 
-	time.Sleep(10 * time.Second)
+	// var result QueryResultList = QueryResultList{
+	// 	List: []QuerySong{
+	// 		{Name: "东风破", Singer: "周杰伦"},
+	// 		{Name: "遇见", Singer: "孙燕姿"},
+	// 	},
+	// }
 
-	var result QueryResultList = QueryResultList{
-		List: []QuerySong{
-			{Name: "东风破", Singer: "周杰伦"},
-			{Name: "遇见", Singer: "孙燕姿"},
-		},
+	html, err := service.SongSvr.Query(query)
+	if err != nil {
+		util.Fail(c, data.HTTP_CODE_SERVER_ERR, err.Error())
+		return
 	}
 
-	util.Success(c, result)
+	util.Success(c, html)
 }

@@ -24,6 +24,7 @@ func installApiRouter(r *gin.Engine) {
 
 	api := r.Group("/api")
 	api.Use(middleware.AuthMiddleware())
+
 	api.GET("/search", controller.Search) //巡查总数据统计
 }
 

@@ -49,7 +49,7 @@ func Logger() gin.HandlerFunc {
 		responseBody := writer.body.String()
 		if len(responseBody) > 0 {
 			// 限制响应日志长度，最多记录2000字符
-			maxLen := 2000
+			maxLen := 1024
 			if len(responseBody) > maxLen {
 				responseBody = responseBody[:maxLen] + "... [truncated]"
 			}
