@@ -26,18 +26,11 @@ func Search(c *gin.Context) {
 		return
 	}
 
-	// var result QueryResultList = QueryResultList{
-	// 	List: []QuerySong{
-	// 		{Name: "东风破", Singer: "周杰伦"},
-	// 		{Name: "遇见", Singer: "孙燕姿"},
-	// 	},
-	// }
-
-	html, err := service.SongSvr.Query(query)
+	resp, err := service.SongSvr.Query(query)
 	if err != nil {
 		util.Fail(c, data.HTTP_CODE_SERVER_ERR, err.Error())
 		return
 	}
 
-	util.Success(c, html)
+	util.Success(c, resp)
 }

@@ -11,18 +11,34 @@ import (
 	"github.com/PuerkitoBio/goquery"
 )
 
+const FANGPI_URL string = "https://www.fangpi.net"
+
 type SongService struct {
-	BaseSvr *BaseService
+	songsMap map[string]model.Song
 }
 
-var SongSvr SongService = SongService{
-	BaseSvr: BaseSvr,
+var SongSvr *SongService
+
+func init() {
+	util.Logi("init song service")
+	SongSvr = &SongService{
+		songsMap: make(map[string]model.Song),
+	}
 }
 
 func (s *SongService) Query(query string) ([]model.Song, error) {
-	url := fmt.Sprintf("https://www.fangpi.net/s/%s", query)
+	var songList []model.Song = []model.Song{}
+	list, err := s.QueryFromFangpiWeb(query)
+	songList = append(songList, list...)
+	return songList, err
+}
+
+// 从FP网站爬取数据
+func (s *SongService) QueryFromFangpiWeb(query string) ([]model.Song, error) {
+	url := fmt.Sprintf("%s/s/%s", FANGPI_URL, query)
 	respHtml, err := s.FetchHtml(url)
 	if err != nil {
+		util.Logi("fetch html form %s error", url)
 		return nil, err
 	}
 
@@ -36,7 +52,7 @@ func (s *SongService) ParseQueryHtml(respHtml string) ([]model.Song, error) {
 		return nil, err
 	}
 
-	util.Logi("doc parse ...")
+	util.Logi("respHtml parse ...")
 
 	// 对应 getElementsByClass("col-8 col-content")
 	doc.Find(".col-8.col-content").Each(func(i int, s *goquery.Selection) {
@@ -48,22 +64,51 @@ func (s *SongService) ParseQueryHtml(respHtml string) ([]model.Song, error) {
 	// 对应:
 	// doc.getElementsByClass("card-body").first()?.getElementsByClass("row")
 	doc.Find(".card-body").First().Find(".row").Each(func(i int, row *goquery.Selection) {
-		author := strings.TrimSpace(row.Find("small").First().Text())
-		music := strings.TrimSpace(row.Find("span").First().Text())
-		href, _ := row.Find("a").First().Attr("href")
-
-		util.Logi("%s - %s \t%s\n", music, author, href)
-		if author != "" && music != "" && href != "" {
-			songList = append(songList, model.Song{
-				Author: author,
-				Name:   music,
-				Href:   href,
-			})
+		song := s.fillSpiderSong(row)
+		if song != nil {
+			songList = append(songList, *song)
 		}
 	})
 
-	util.Logi("doc parse end")
+	util.Logi("respHtml parse end")
 	return songList, nil
+}
+
+func (s *SongService) fillSpiderSong(row *goquery.Selection) *model.Song {
+	if row == nil {
+		return nil
+	}
+
+	author := strings.TrimSpace(row.Find("small").First().Text())
+	music := strings.TrimSpace(row.Find("span").First().Text())
+	href, _ := row.Find("a").First().Attr("href")
+
+	if author == "" || music == "" || href == "" {
+		return nil
+	}
+
+	originId := FindOriginIdFromHref(href)
+	var musicId string = util.BuildMid(originId, util.MUSIC_SRC_FANGPI)
+
+	util.Logi("mid: %s\t%s - %s \t%s\n", musicId, music, author, href)
+	return &model.Song{
+		Mid:    musicId,
+		Author: author,
+		Name:   music,
+		Href:   href,
+	}
+}
+
+func FindOriginIdFromHref(href string) string {
+	if util.IsEmpty(href) {
+		return ""
+	}
+
+	index := strings.LastIndex(href, "/")
+	if index >= 0 {
+		return href[index+1:]
+	}
+	return ""
 }
 
 func (s *SongService) FetchHtml(url string) (string, error) {
