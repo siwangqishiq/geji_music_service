@@ -28,7 +28,7 @@ func init() {
 	SpiderFangpiSvr = &SpiderFangpiService{}
 }
 
-func (s *SpiderFangpiService) SpiderMusicDetail(id string) (*model.Song, error) {
+func (s *SpiderFangpiService) SpiderMusicDetail(id string) (*model.SongDetail, error) {
 	if util.IsEmpty(id) {
 		util.Loge("id is empty")
 		return nil, nil
@@ -40,11 +40,11 @@ func (s *SpiderFangpiService) SpiderMusicDetail(id string) (*model.Song, error) 
 	if err != nil {
 		return nil, err
 	}
-	s.GetDetailFromHtml(htmlResp)
-	return nil, err
+	songDetail, err := s.GetDetailFromHtml(htmlResp)
+	return songDetail, err
 }
 
-func (s *SpiderFangpiService) GetDetailFromHtml(html string) (*model.Song, error) {
+func (s *SpiderFangpiService) GetDetailFromHtml(html string) (*model.SongDetail, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (s *SpiderFangpiService) GetDetailFromHtml(html string) (*model.Song, error
 	playUrl := s.FetchPlayUrl(songDetail.PlayID)
 	util.Logi("fetch play url %s", playUrl)
 	songDetail.PlayURL = playUrl
-	return nil, nil
+	return songDetail, nil
 }
 
 func (s *SpiderFangpiService) FetchPlayUrl(playId string) string {
@@ -258,6 +258,7 @@ func (s *SpiderFangpiService) QueryFromFangpiWeb(query string) ([]model.Song, er
 }
 
 func (s *SpiderFangpiService) ParseQueryHtml(respHtml string) ([]model.Song, error) {
+	util.Logi("fetchhtml:%s", respHtml)
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(respHtml))
 	if err != nil {
 		return nil, err
@@ -306,7 +307,6 @@ func (s *SpiderFangpiService) fillSpiderSong(row *goquery.Selection) *model.Song
 		Mid:    musicId,
 		Author: author,
 		Name:   music,
-		Href:   href,
 	}
 }
 
