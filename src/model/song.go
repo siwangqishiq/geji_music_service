@@ -15,7 +15,7 @@ type Music struct {
 	Lyc         string `json:"lyc,omitempty"`
 	MusicUrl    string `json:"musicUrl,omitempty"`
 	BackupUrl   string `json:"backupUrl,omitempty"`
-	DurationSec int32  `json:"DurationSec,omitempty"`
+	DurationSec int32  `json:"durationSecs,omitempty"`
 	Desc        string `json:"desc,omitempty"`
 }
 
