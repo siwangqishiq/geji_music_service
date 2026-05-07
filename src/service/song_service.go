@@ -24,11 +24,11 @@ func (msvr *MusicService) GetMusicDetailByMid(mid string) (*model.Music, error) 
 		return nil, fmt.Errorf("mid is empty")
 	}
 
-	music, exist := msvr.musicMap[mid]
-	if exist {
-		util.Logi("%s hit cache", mid)
-		return music, nil
-	}
+	// music, exist := msvr.musicMap[mid]
+	// if exist {
+	// 	util.Logi("%s hit cache", mid)
+	// 	return music, nil
+	// }
 
 	pSrc, pId := util.ParseMid(mid)
 	if pSrc == nil || pId == nil {
