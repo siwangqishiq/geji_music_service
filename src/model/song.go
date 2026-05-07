@@ -1,5 +1,10 @@
 package model
 
+import (
+	"geji/dao"
+	"geji/util"
+)
+
 type Song struct {
 	Mid    string `json:"mid"`
 	Author string `json:"author,omitempty"`
@@ -14,9 +19,21 @@ type Music struct {
 	Cover       string `json:"cover,omitempty"`
 	Lyc         string `json:"lyc,omitempty"`
 	MusicUrl    string `json:"musicUrl,omitempty"`
-	BackupUrl   string `json:"backupUrl,omitempty"`
+	LocalPath   string `json:"localPath,omitempty"`
 	DurationSec int32  `json:"durationSecs,omitempty"`
 	Desc        string `json:"desc,omitempty"`
+}
+
+func DaoMusicToModel(music *dao.Music) Music {
+	var url string = util.GetUrlFromLocalPath(music.LocalPath)
+	return Music{
+		Mid:         music.Mid,
+		Name:        music.Name,
+		Author:      music.Author,
+		MusicUrl:    url,
+		DurationSec: music.DurationSec,
+		Cover:       music.Cover,
+	}
 }
 
 type SongDetail struct {
@@ -27,6 +44,7 @@ type SongDetail struct {
 	Cover      string `json:"mp3_cover"`
 	DurSeconds int
 	PlayURL    string
+	Href       string
 }
 
 type PlayUrlData struct {

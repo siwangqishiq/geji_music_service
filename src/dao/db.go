@@ -1,7 +1,55 @@
 package dao
 
-import "geji/util"
+import (
+	"geji/util"
+	"time"
+
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+)
+
+var DB *gorm.DB
 
 func init() {
 	util.Logi("init dao module")
+	var err error
+
+	DB, err = gorm.Open(sqlite.Open("../database/geji.db"), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+}
+
+type Music struct {
+	ID          int64     `gorm:"column:id;primaryKey;autoIncrement"`
+	Mid         string    `gorm:"column:mid"`
+	Author      string    `gorm:"column:author"`
+	Name        string    `gorm:"column:name"`
+	Href        string    `gorm:"column:href"`
+	Cover       string    `gorm:"column:cover"`
+	Lyc         string    `gorm:"column:lyc"`
+	MusicUrl    string    `gorm:"column:music_url"`
+	LocalPath   string    `gorm:"column:local_path"`
+	DurationSec int32     `gorm:"column:duration_sec"`
+	Desc        string    `gorm:"column:desc"`
+	Status      int32     `gorm:"column:status"`
+	CreateTime  time.Time `gorm:"column:create_time"`
+	UpdateTime  time.Time `gorm:"column:update_time"`
+}
+
+// TableName 指定表名
+func (Music) TableName() string {
+	return "music"
+}
+
+// InsertMusic 插入音乐
+func InsertMusic(music *Music) error {
+	return DB.Create(music).Error
+}
+
+// QueryAllMusic 查询全部音乐
+func QueryAllMusic() ([]Music, error) {
+	var list []Music
+	err := DB.Find(&list).Error
+	return list, err
 }

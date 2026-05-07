@@ -2,6 +2,8 @@ package service
 
 import (
 	"fmt"
+	"geji/config"
+	"geji/dao"
 	"geji/model"
 	"geji/util"
 )
@@ -17,6 +19,23 @@ func init() {
 	MusicSvr = &MusicService{
 		musicMap: make(map[string]*model.Music),
 	}
+
+	MusicSvr.loadMusicToCache()
+}
+
+func (msvr *MusicService) loadMusicToCache() error {
+	util.Logi("loadMusicToCache ... ")
+	musicList, err := dao.QueryAllMusic()
+	if err != nil {
+		util.Loge("load music database error")
+		return err
+	}
+	for _, m := range musicList {
+		modelMu := model.DaoMusicToModel(&m)
+		msvr.musicMap[m.Mid] = &modelMu
+	}
+	util.Logi("loadMusicToCache success size : %d ", len(msvr.musicMap))
+	return nil
 }
 
 func (msvr *MusicService) GetMusicDetailByMid(mid string) (*model.Music, error) {
@@ -24,11 +43,11 @@ func (msvr *MusicService) GetMusicDetailByMid(mid string) (*model.Music, error) 
 		return nil, fmt.Errorf("mid is empty")
 	}
 
-	// music, exist := msvr.musicMap[mid]
-	// if exist {
-	// 	util.Logi("%s hit cache", mid)
-	// 	return music, nil
-	// }
+	music, exist := msvr.musicMap[mid]
+	if exist {
+		util.Logi("%s hit cache", mid)
+		return music, nil
+	}
 
 	pSrc, pId := util.ParseMid(mid)
 	if pSrc == nil || pId == nil {
@@ -51,17 +70,55 @@ func (msvr *MusicService) GetMusicDetailByMid(mid string) (*model.Music, error) 
 		return nil, err
 	}
 
-	var retMusic = model.Music{
+	localPath, downloadErr := msvr.CatchMusicFromUrl(detail)
+	if downloadErr != nil {
+		return nil, fmt.Errorf("下载资源失败 %s", detail.PlayURL)
+	}
+
+	var daoMusic dao.Music = dao.Music{
 		Mid:         mid,
-		Name:        detail.Title,
 		Author:      detail.Author,
+		Name:        detail.Title,
+		Href:        detail.Href,
+		Cover:       detail.Cover,
 		MusicUrl:    detail.PlayURL,
 		DurationSec: int32(detail.DurSeconds),
-		Cover:       detail.Cover,
+		Desc:        "",
+		LocalPath:   localPath,
 	}
+
+	dbErr := dao.InsertMusic(&daoMusic)
+	if dbErr != nil {
+		return nil, fmt.Errorf("数据库操作失败")
+	}
+
+	var retMusic = model.DaoMusicToModel(&daoMusic)
 
 	msvr.musicMap[mid] = &retMusic
 	return &retMusic, nil
+}
+
+func (s *MusicService) CatchMusicFromUrl(detail *model.SongDetail) (string, error) {
+	downloadUrl := detail.PlayURL
+	if util.IsEmpty(downloadUrl) {
+		util.Loge("download play url but url is null")
+		return "", fmt.Errorf("url is empty")
+	}
+
+	util.Logi("download url : %s ", downloadUrl)
+	ext := util.GetUrlExt(downloadUrl)
+	util.Logi("download ext : %s ", ext)
+	filename := util.MD5(downloadUrl) + ext
+	localPath := fmt.Sprintf("%s/%s", config.MEDIA_PATH, filename)
+
+	util.Logi("localPath : %s ", localPath)
+	err := util.DownloadFile(localPath, downloadUrl)
+	if err != nil {
+		return "", err
+	}
+
+	util.Logi("download success localPath : %s ", localPath)
+	return filename, nil
 }
 
 func (s *MusicService) Query(query string) ([]model.Song, error) {

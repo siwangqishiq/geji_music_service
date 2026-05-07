@@ -7,3 +7,7 @@ const IS_DEBUG bool = true
 const VERSION string = "0.0.1"
 
 const Port int32 = 4488 //服务端口
+
+const MEDIA_PATH = "../assets" //
+
+const PRD_IP = "101.126.34.145"

@@ -1,6 +1,8 @@
 build
 .vscode/
 logs/
+assets/
+database/geji.db
 
 # Miscellaneous
 *.class

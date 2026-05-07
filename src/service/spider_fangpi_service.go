@@ -41,6 +41,7 @@ func (s *SpiderFangpiService) SpiderMusicDetail(id string) (*model.SongDetail, e
 		return nil, err
 	}
 	songDetail, err := s.GetDetailFromHtml(htmlResp)
+	songDetail.Href = href
 	return songDetail, err
 }
 

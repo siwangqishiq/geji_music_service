@@ -18,6 +18,11 @@ func installCommonRouter(r *gin.Engine) {
 	})
 }
 
+func installStaticRouter(r *gin.Engine) {
+	util.Logi("install static router")
+	r.Static("media", config.MEDIA_PATH)
+}
+
 // 需要鉴权的url
 func installApiRouter(r *gin.Engine) {
 	util.Logi("install api router")
@@ -40,6 +45,9 @@ func InitRouter() *gin.Engine {
 
 	// 公共接口
 	installCommonRouter(r)
+	installStaticRouter(r)
+
+	//
 	installApiRouter(r)
 
 	return r
