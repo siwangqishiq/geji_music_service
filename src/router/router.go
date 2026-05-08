@@ -5,6 +5,8 @@ import (
 	"geji/controller"
 	"geji/middleware"
 	"geji/util"
+	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -21,6 +23,21 @@ func installCommonRouter(r *gin.Engine) {
 func installStaticRouter(r *gin.Engine) {
 	util.Logi("install static router")
 	r.Static("media", config.MEDIA_PATH)
+	// r.Static("/web", "../web")
+
+	webRoot := "../web"
+	r.Use(func(c *gin.Context) {
+		path := webRoot + c.Request.URL.Path
+		// 文件存在
+		if _, err := os.Stat(path); err == nil {
+			http.FileServer(http.Dir(webRoot)).ServeHTTP(c.Writer, c.Request)
+			c.Abort()
+			return
+		}
+		// Flutter Web SPA
+		c.File(webRoot + "/index.html")
+		c.Abort()
+	})
 }
 
 // 需要鉴权的url
