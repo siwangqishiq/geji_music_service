@@ -35,8 +35,8 @@ func installStaticRouter(r *gin.Engine) {
 			return
 		}
 		// Flutter Web SPA
-		c.File(webRoot + "/index.html")
-		c.Abort()
+		// c.File(webRoot + "/index.html")
+		// c.Abort()
 	})
 }
 
