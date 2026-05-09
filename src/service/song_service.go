@@ -6,6 +6,7 @@ import (
 	"geji/dao"
 	"geji/model"
 	"geji/util"
+	"strings"
 	"time"
 )
 
@@ -131,5 +132,33 @@ func (s *MusicService) Query(query string) ([]model.Song, error) {
 	var songList []model.Song = []model.Song{}
 	list, err := SpiderFangpiSvr.QueryFromFangpiWeb(query)
 	songList = append(songList, list...)
+
+	if len(songList) == 0 {
+		revealList, reErr := s.RevealSearchContent(query)
+		if reErr == nil {
+			util.Logi("触发兜底搜素 reveal list size : %d", len(revealList))
+			songList = append(songList, revealList...)
+		}
+	}
+
 	return songList, err
+}
+
+func (s *MusicService) RevealSearchContent(query string) ([]model.Song, error) {
+	var retList []model.Song = []model.Song{}
+	if util.IsEmpty(query) {
+		return retList, fmt.Errorf("Query is empty")
+	}
+
+	for _, music := range s.musicMap {
+		if strings.ContainsAny(music.Name, query) || strings.ContainsAny(music.Author, query) {
+			song := model.Song{
+				Mid:    music.Mid,
+				Author: music.Author,
+				Name:   music.Name,
+			}
+			retList = append(retList, song)
+		}
+	} //end for music map
+	return retList, nil
 }
