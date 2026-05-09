@@ -6,6 +6,7 @@ import (
 	"geji/dao"
 	"geji/model"
 	"geji/util"
+	"time"
 )
 
 type MusicService struct {
@@ -112,11 +113,16 @@ func (s *MusicService) CatchMusicFromUrl(detail *model.SongDetail) (string, erro
 	localPath := fmt.Sprintf("%s/%s", config.MEDIA_PATH, filename)
 
 	util.Logi("localPath : %s ", localPath)
+
+	util.Logi("%s - %s start to download..", detail.Title, detail.Author)
+	downloadStartTime := time.Now()
 	err := util.DownloadFile(localPath, downloadUrl)
 	if err != nil {
+		util.Loge("%s - %s download failed %v", detail.Title, detail.Author, err)
 		return "", err
 	}
-
+	downloadElapsed := time.Since(downloadStartTime)
+	util.Logi("%s - %s download spent time %d ms", detail.Title, detail.Author, downloadElapsed.Milliseconds())
 	util.Logi("download success localPath : %s ", localPath)
 	return filename, nil
 }
