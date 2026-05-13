@@ -27,3 +27,39 @@ CREATE TABLE IF NOT EXISTS kv_cache (
     status INTEGER DEFAULT 0,
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS account (
+    uid INTEGER PRIMARY KEY AUTOINCREMENT,
+    account TEXT NOT NULL UNIQUE,
+    password TEXT,
+    nickname TEXT,
+    remark TEXT,
+    age TEXT,
+    avater TEXT,
+    desc TEXT,
+
+    status INTEGER DEFAULT 0,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS favor_ablum(
+    aid INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    remark TEXT,
+    cover TEXT,
+
+    status INTEGER DEFAULT 0,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS favor (
+    fid INTEGER PRIMARY KEY AUTOINCREMENT,
+    aid INTEGER,
+    uid INTEGER,
+    mid TEXT,
+    remark TEXT,
+    status INTEGER DEFAULT 0,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+);
