@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"os"
@@ -18,6 +19,19 @@ func GetUrlExt(rawUrl string) string {
 	}
 
 	return path.Ext(u.Path)
+}
+
+func FindFileMime(file *multipart.FileHeader) string {
+	if file == nil {
+		return ""
+	}
+
+	src, _ := file.Open()
+	defer src.Close()
+	buffer := make([]byte, 512)
+	src.Read(buffer)
+	mimeType := http.DetectContentType(buffer)
+	return mimeType
 }
 
 func MD5(str string) string {

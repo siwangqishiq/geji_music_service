@@ -40,7 +40,7 @@ func UploadFile(c *gin.Context) {
 	// 返回数据
 	util.Success(c, gin.H{
 		"url":      url,
-		"mime":     file.Header.Get("Content-Type"),
+		"mime":     util.FindFileMime(file),
 		"filesize": file.Size,
 	})
 }
