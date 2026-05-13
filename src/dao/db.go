@@ -2,15 +2,14 @@ package dao
 
 import (
 	"geji/util"
+	"sync"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
-
-var MucDao *MusicDAO
-var KvcDao *KvCacheDAO
+var DbMutex *sync.Mutex
 
 func init() {
 	util.Logi("init dao module")
@@ -21,11 +20,5 @@ func init() {
 		panic("failed to connect database")
 	}
 
-	MucDao = &MusicDAO{
-		db: DB,
-	}
-
-	KvcDao = &KvCacheDAO{
-		db: DB,
-	}
+	DbMutex = &sync.Mutex{}
 }

@@ -2,8 +2,6 @@ package dao
 
 import (
 	"time"
-
-	"gorm.io/gorm"
 )
 
 type Music struct {
@@ -24,7 +22,12 @@ type Music struct {
 }
 
 type MusicDAO struct {
-	db *gorm.DB
+}
+
+var MucDao *MusicDAO
+
+func init() {
+	MucDao = &MusicDAO{}
 }
 
 // TableName 指定表名

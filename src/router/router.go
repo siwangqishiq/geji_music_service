@@ -19,6 +19,9 @@ func installCommonRouter(r *gin.Engine) {
 		util.Success(c, gin.H{"version": config.VERSION})
 	})
 
+	//文件上传
+	r.POST("uploadfile", controller.UploadFile)
+
 	//注册接口
 	r.POST("/register", controller.AccountCreate)
 	//登录接口
@@ -65,6 +68,7 @@ func installApiRouter(r *gin.Engine) {
 func InitRouter() *gin.Engine {
 	util.Logi("初始化路由配置")
 	r := gin.New()
+	r.MaxMultipartMemory = config.MAX_UPLOAD_SIZE
 
 	// 全局中间件
 	r.Use(middleware.Logger())
