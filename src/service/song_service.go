@@ -27,7 +27,7 @@ func init() {
 
 func (msvr *MusicService) loadMusicToCache() error {
 	util.Logi("loadMusicToCache ... ")
-	musicList, err := dao.QueryAllMusic()
+	musicList, err := dao.MucDao.QueryAllMusic()
 	if err != nil {
 		util.Loge("load music database error")
 		return err
@@ -89,7 +89,7 @@ func (msvr *MusicService) GetMusicDetailByMid(mid string) (*model.Music, error) 
 		LocalPath:   localPath,
 	}
 
-	dbErr := dao.InsertMusic(&daoMusic)
+	dbErr := dao.MucDao.InsertMusic(&daoMusic)
 	if dbErr != nil {
 		return nil, fmt.Errorf("数据库操作失败")
 	}

@@ -49,6 +49,12 @@ func installApiRouter(r *gin.Engine) {
 
 	api.GET("/search", controller.Search)      //巡查总数据统计
 	api.GET("/detail", controller.MusicDetail) //查询详情
+
+	if config.IS_DEBUG {
+		api.GET("kvput", controller.KvCachePut)
+		api.GET("kvget", controller.KvCacheGet)
+		api.GET("kvdel", controller.KvCacheDel)
+	}
 }
 
 func InitRouter() *gin.Engine {

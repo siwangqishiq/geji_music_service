@@ -3,6 +3,7 @@ package middleware
 import (
 	"bytes"
 	"geji/util"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -33,10 +34,9 @@ func Logger() gin.HandlerFunc {
 			ResponseWriter: c.Writer,
 			body:           &bytes.Buffer{},
 		}
+
 		c.Writer = writer
-
 		c.Next()
-
 		duration := time.Since(start)
 
 		// 记录请求信息
@@ -44,6 +44,11 @@ func Logger() gin.HandlerFunc {
 			c.Request.URL.Path,
 			c.ClientIP(),
 			duration)
+
+		//资源文件 不打印日志
+		if strings.HasPrefix(c.Request.URL.Path, "/media/") {
+			return
+		}
 
 		// 记录响应内容（限制长度避免日志过大）
 		responseBody := writer.body.String()
