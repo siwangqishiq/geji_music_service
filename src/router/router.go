@@ -20,7 +20,7 @@ func installCommonRouter(r *gin.Engine) {
 	})
 
 	//文件上传
-	r.POST("uploadfile", controller.UploadFile)
+	r.POST("/uploadfile", controller.UploadFile)
 
 	//注册接口
 	r.POST("/register", controller.AccountCreate)

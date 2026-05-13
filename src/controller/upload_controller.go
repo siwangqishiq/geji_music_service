@@ -39,12 +39,8 @@ func UploadFile(c *gin.Context) {
 	url := util.GetUrlFromLocalPath(savePath)
 	// 返回数据
 	util.Success(c, gin.H{
-		"code": http.StatusOK,
-		"msg":  "上传成功",
-		"data": gin.H{
-			"url":      url,
-			"mime":     file.Header.Get("Content-Type"),
-			"filesize": file.Size,
-		},
+		"url":      url,
+		"mime":     file.Header.Get("Content-Type"),
+		"filesize": file.Size,
 	})
 }
