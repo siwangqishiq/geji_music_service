@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"geji/config"
+	"geji/component"
 	"geji/data"
 	"geji/util"
 
@@ -15,9 +15,11 @@ func AuthMiddleware() gin.HandlerFunc {
 		token := c.GetHeader(data.KEY_TOKEN)
 		util.Logi("request get token : %s", token)
 
-		// 调试模式下使用默认值
-		if config.IS_DEBUG {
-			c.Set(data.KEY_USER_ID, 1)
+		if !util.IsEmpty(token) {
+			userClaims, err := component.ParseTokenToUserClaims(token)
+			if err != nil {
+				c.Set(data.KEY_USER_CLAIMS, userClaims)
+			}
 		}
 
 		c.Next()

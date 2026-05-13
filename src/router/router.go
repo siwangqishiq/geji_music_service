@@ -18,6 +18,11 @@ func installCommonRouter(r *gin.Engine) {
 	r.GET("/version", func(c *gin.Context) {
 		util.Success(c, gin.H{"version": config.VERSION})
 	})
+
+	//注册接口
+	r.POST("/register", controller.AccountCreate)
+	//登录接口
+	r.POST("/login", controller.AccountLogin)
 }
 
 func installStaticRouter(r *gin.Engine) {
