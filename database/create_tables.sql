@@ -61,5 +61,5 @@ CREATE TABLE IF NOT EXISTS favor (
     mid TEXT,
     remark TEXT,
     status INTEGER DEFAULT 0,
-    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );

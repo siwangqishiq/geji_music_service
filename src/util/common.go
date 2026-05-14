@@ -72,3 +72,7 @@ func GetUrlFromLocalPath(localPath string) string {
 
 	return fmt.Sprintf("http://%s:%d/media/%s", host, config.Port, localPath)
 }
+
+func GetAssetRelativePath(localPath string) string {
+	return fmt.Sprintf("/media/%s", localPath)
+}

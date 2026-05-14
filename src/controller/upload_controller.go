@@ -1,8 +1,6 @@
 package controller
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"fmt"
 	"geji/config"
 	"geji/util"
@@ -24,8 +22,8 @@ func UploadFile(c *gin.Context) {
 	ext := filepath.Ext(file.Filename)
 	now := time.Now().UnixMilli()
 	rawName := fmt.Sprintf("%d%s", now, file.Filename)
-	hash := md5.Sum([]byte(rawName))
-	fileName := hex.EncodeToString(hash[:]) + ext
+	hash := util.MD5(rawName)
+	fileName := hash + ext
 
 	saveDir := config.MEDIA_PATH
 	// 保存路径
@@ -35,8 +33,7 @@ func UploadFile(c *gin.Context) {
 		util.Fail(c, http.StatusBadRequest, "上传失败")
 		return
 	}
-
-	url := util.GetUrlFromLocalPath(savePath)
+	url := util.GetAssetRelativePath(fileName)
 	// 返回数据
 	util.Success(c, gin.H{
 		"url":      url,
