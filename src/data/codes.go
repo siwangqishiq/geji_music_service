@@ -6,3 +6,7 @@ const HTTP_CODE_CLIENT_ERR int = 500
 
 const ERR_CODE_NOMID int = 50001          //无mid参数
 const ERR_CODE_NOTFOUND_MUSIC int = 50002 //未发现音乐
+
+const ERR_CODE_DATABASE_ERROR = 50003 //数据库错误
+
+const ERR_CODE_ACCOUNT_REPEAT = 60004 //账号重复

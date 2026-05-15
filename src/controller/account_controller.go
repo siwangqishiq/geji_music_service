@@ -1,39 +1,32 @@
 package controller
 
 import (
+	"geji/model"
+	"geji/service"
 	"geji/util"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
-type CreateAccountReq struct {
-	Account  string `json:"account" binding:"required"`
-	Nickname string `json:"nickname"`
-	Password string `json:"password" binding:"required"`
-}
-
 // 注册
 func AccountCreate(c *gin.Context) {
-	var req CreateAccountReq
+	var req model.CreateAccountReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		util.Fail(c, http.StatusBadRequest, "参数错误: account nickname password 为必填项")
+		util.Fail(c, http.StatusBadRequest, "参数错误: 账户 密码 为必填项")
 		return
 	}
 
-}
-
-type LoginReq struct {
-	Account  string `json:"account" binding:"required"`
-	Password string `json:"password" binding:"required"`
+	service.AccSvr.AccountCreate(c, &req)
 }
 
 // 登录
 func AccountLogin(c *gin.Context) {
-	var req LoginReq
+	var req model.LoginReq
 	if err := c.ShouldBindJSON(&req); err != nil {
-		util.Fail(c, http.StatusBadRequest, "参数错误: account password 为必填项")
+		util.Fail(c, http.StatusBadRequest, "参数错误: 账户 密码 为必填项")
 		return
 	}
 
+	service.AccSvr.Login(c, &req)
 }
