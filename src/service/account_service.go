@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+	"geji/component"
 	"geji/dao"
 	"geji/data"
 	"geji/model"
@@ -11,12 +13,15 @@ import (
 )
 
 type AccountService struct {
+	IdTokens map[int64]string
 }
 
 var AccSvr AccountService
 
 func init() {
-	AccSvr = AccountService{}
+	AccSvr = AccountService{
+		IdTokens: make(map[int64]string),
+	}
 }
 
 func (a *AccountService) AccountCreate(c *gin.Context, req *model.CreateAccountReq) {
@@ -55,5 +60,42 @@ func (a *AccountService) AccountCreate(c *gin.Context, req *model.CreateAccountR
 }
 
 func (a *AccountService) Login(c *gin.Context, req *model.LoginReq) {
+	account, err := dao.QueryAccountByAccount(dao.DB, req.Account)
+	if err != nil {
+		util.Fail(c, data.ERR_CODE_DATABASE_ERROR, err.Error())
+		return
+	}
 
+	if account == nil || account.Uid <= 0 {
+		util.Fail(c, data.ERR_CODE_ACCOUNT_NOT_EXIST, "账户不存在")
+		return
+	}
+
+	util.Logi("account req %s origin %s", req.Password, account.Password)
+	if account.Password != req.Password {
+		util.Fail(c, data.ERR_CODE_LOGIN_PWDERROR, "密码错误")
+		return
+	}
+
+	token, err := component.GenerateToken(account.Uid)
+	if err != nil {
+		util.Fail(c, data.ERR_CODE_LOGIN_GEN_TOKEN_FAILED, "登录token生成错误")
+		return
+	}
+
+	var resp = model.LoginResp{
+		Token:    token,
+		Uid:      account.Uid,
+		Account:  account.Account,
+		Avater:   account.Avater,
+		Age:      account.Age,
+		Nickname: account.Nickname,
+		Remark:   account.Remark,
+	}
+
+	util.Logi("account %s %d 登录成功", account.Account, account.Uid)
+
+	// AccSvr.IdTokens[resp.Uid] = resp.Token
+	KVSvr.Put(fmt.Sprintf(data.KVCACHE_ONLINE, resp.Uid), resp.Token)
+	util.Success(c, resp)
 }
