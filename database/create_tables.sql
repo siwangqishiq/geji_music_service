@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS account (
     nickname TEXT,
     remark TEXT,
     age TEXT,
-    avater TEXT,
+    avatar TEXT,
     desc TEXT,
 
     status INTEGER DEFAULT 0,

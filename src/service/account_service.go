@@ -43,7 +43,7 @@ func (a *AccountService) AccountCreate(c *gin.Context, req *model.CreateAccountR
 		Account:    req.Account,
 		Password:   req.Password,
 		Nickname:   req.Nickname,
-		Avater:     req.Avatar,
+		Avatar:     req.Avatar,
 		Status:     0,
 		CreateTime: nowTime,
 		UpdateTime: nowTime,
@@ -87,13 +87,14 @@ func (a *AccountService) Login(c *gin.Context, req *model.LoginReq) {
 		Token:    token,
 		Uid:      account.Uid,
 		Account:  account.Account,
-		Avater:   account.Avater,
+		Avatar:   account.Avatar,
 		Age:      account.Age,
 		Nickname: account.Nickname,
 		Remark:   account.Remark,
 	}
 
-	util.Logi("account %s %d 登录成功", account.Account, account.Uid)
+	util.Logi("account %s %d 登录成功 nickname %v avatar %v",
+		resp.Account, resp.Uid, resp.Nickname, resp.Avatar)
 
 	// AccSvr.IdTokens[resp.Uid] = resp.Token
 	KVSvr.Put(fmt.Sprintf(data.KVCACHE_ONLINE, resp.Uid), resp.Token)

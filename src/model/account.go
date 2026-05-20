@@ -18,6 +18,6 @@ type LoginResp struct {
 	Nickname string `json:"nickname"`
 	Remark   string `json:"remark"`
 	Age      string `json:"age"`
-	Avater   string `json:"avater"`
+	Avatar   string `json:"avatar"`
 	Token    string `json:"token"`
 }

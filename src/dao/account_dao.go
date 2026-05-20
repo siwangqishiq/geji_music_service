@@ -14,7 +14,7 @@ type AccountModel struct {
 	Nickname   string    `gorm:"column:nickname;type:text" json:"nickname"`
 	Remark     string    `gorm:"column:remark;type:text" json:"remark"`
 	Age        string    `gorm:"column:age;type:text" json:"age"`
-	Avater     string    `gorm:"column:avater;type:text" json:"avater"`
+	Avatar     string    `gorm:"column:avatar;type:text" json:"avatar"`
 	Desc       string    `gorm:"column:desc;type:text" json:"desc"`
 	Status     int       `gorm:"column:status;default:0" json:"status"`
 	CreateTime time.Time `gorm:"column:create_time;autoCreateTime" json:"create_time"`
