@@ -55,7 +55,7 @@ func ParseTokenToUserClaims(tokenString string) (UserClaims, error) {
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
-		uid := int64(claims[data.KEY_USER_ID].(int64))
+		uid := int64(claims[data.KEY_USER_ID].(float64))
 
 		return UserClaims{
 			Uid: uid,

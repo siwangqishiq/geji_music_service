@@ -18,6 +18,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		if !util.IsEmpty(token) {
 			userClaims, err := component.ParseTokenToUserClaims(token)
 			if err != nil {
+				util.Logi("request from uid : %v", userClaims.Uid)
 				c.Set(data.KEY_USER_CLAIMS, userClaims)
 			}
 		}

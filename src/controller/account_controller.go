@@ -36,8 +36,9 @@ func AccountLogout(c *gin.Context) {
 	userClaims, ok := GetUserClaims(c)
 	if !ok {
 		util.Fail(c, http.StatusBadRequest, "未查询到登录信息")
+		return
 	}
-	token := c.GetHeader(data.KEY_TOKEN)
 
-	service.AccSvr.Logout(c, userClaims)
+	token := c.GetHeader(data.KEY_TOKEN)
+	service.AccSvr.Logout(c, userClaims, token)
 }
