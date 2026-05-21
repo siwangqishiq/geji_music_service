@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"geji/data"
 	"geji/model"
 	"geji/service"
 	"geji/util"
@@ -29,4 +30,14 @@ func AccountLogin(c *gin.Context) {
 	}
 
 	service.AccSvr.Login(c, &req)
+}
+
+func AccountLogout(c *gin.Context) {
+	userClaims, ok := GetUserClaims(c)
+	if !ok {
+		util.Fail(c, http.StatusBadRequest, "未查询到登录信息")
+	}
+	token := c.GetHeader(data.KEY_TOKEN)
+
+	service.AccSvr.Logout(c, userClaims)
 }

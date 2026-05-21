@@ -100,3 +100,16 @@ func (a *AccountService) Login(c *gin.Context, req *model.LoginReq) {
 	KVSvr.Put(fmt.Sprintf(data.KVCACHE_ONLINE, resp.Uid), resp.Token)
 	util.Success(c, resp)
 }
+
+func (a *AccountService) Logout(c *gin.Context, userClaims component.UserClaims, reqToken string) {
+	util.Logi("logout uid : %v req token: %v", userClaims.Uid, reqToken)
+	onlineToken := KVSvr.Get(fmt.Sprintf(data.KVCACHE_ONLINE, userClaims.Uid))
+	util.Logi("online Token :%s", onlineToken)
+
+	if onlineToken == reqToken {
+		KVSvr.Del(fmt.Sprintf(data.KVCACHE_ONLINE, userClaims.Uid))
+		util.Success(c, "注销成功")
+	} else {
+		util.Fail(c, data.ERR_CODE_TOKEN_MISTAKEN, "token不一致")
+	}
+}

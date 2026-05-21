@@ -13,3 +13,4 @@ const ERR_CODE_ACCOUNT_NOT_EXIST = 60003      //账号不存在
 const ERR_CODE_ACCOUNT_REPEAT = 60004         //账号重复
 const ERR_CODE_LOGIN_PWDERROR = 60005         //登录密码错误
 const ERR_CODE_LOGIN_GEN_TOKEN_FAILED = 60006 //登录token生成错误
+const ERR_CODE_TOKEN_MISTAKEN = 60007         //登录token生成错误

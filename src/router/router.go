@@ -26,6 +26,8 @@ func installCommonRouter(r *gin.Engine) {
 	r.POST("/register", controller.AccountCreate)
 	//登录接口
 	r.POST("/login", controller.AccountLogin)
+	//退出登录
+	r.POST("/logout", controller.AccountLogout)
 }
 
 func installStaticRouter(r *gin.Engine) {
