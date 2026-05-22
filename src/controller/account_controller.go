@@ -33,8 +33,8 @@ func AccountLogin(c *gin.Context) {
 }
 
 func AccountLogout(c *gin.Context) {
-	userClaims, ok := GetUserClaims(c)
-	if !ok {
+	userClaims, exists := GetUserClaims(c)
+	if !exists {
 		util.Fail(c, http.StatusBadRequest, "未查询到登录信息")
 		return
 	}

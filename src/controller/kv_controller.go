@@ -13,12 +13,6 @@ func KvCachePut(c *gin.Context) {
 	value := c.Query("value")
 	util.Logi("key : %s , value :%s", key, value)
 
-	user, ok := GetUserClaims(c)
-	if !ok {
-		util.Logi("claims is not exist")
-	}
-	util.Logi("uid : %v", user.Uid)
-
 	result := service.KVSvr.Put(key, value)
 	if result {
 		util.Success(c, "设置成功")

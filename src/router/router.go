@@ -26,14 +26,11 @@ func installCommonRouter(r *gin.Engine) {
 	r.POST("/register", controller.AccountCreate)
 	//登录接口
 	r.POST("/login", controller.AccountLogin)
-	//退出登录
-	r.POST("/logout", controller.AccountLogout)
 }
 
 func installStaticRouter(r *gin.Engine) {
 	util.Logi("install static router")
 	r.Static("media", config.MEDIA_PATH)
-	// r.Static("/web", "../web")
 
 	webRoot := "../web"
 	r.Use(func(c *gin.Context) {
@@ -57,8 +54,9 @@ func installApiRouter(r *gin.Engine) {
 	api := r.Group("/api")
 	api.Use(middleware.AuthMiddleware())
 
-	api.GET("/search", controller.Search)      //巡查总数据统计
-	api.GET("/detail", controller.MusicDetail) //查询详情
+	api.GET("/search", controller.Search)         //巡查总数据统计
+	api.GET("/detail", controller.MusicDetail)    //查询详情
+	api.POST("/logout", controller.AccountLogout) //退出登录
 
 	if config.IS_DEBUG {
 		api.GET("kvput", controller.KvCachePut)
