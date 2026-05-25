@@ -43,6 +43,22 @@ CREATE TABLE IF NOT EXISTS account (
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS favor (
+    fid INTEGER PRIMARY KEY AUTOINCREMENT,
+    aid INTEGER,
+    uid INTEGER,
+    mid TEXT,
+    remark TEXT,
+    status INTEGER DEFAULT 0,
+    sort INTEGER,
+    create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_time DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_favor_aid ON favor(aid);
+CREATE INDEX idx_favor_uid ON favor(uid);
+CREATE INDEX idx_favor_uid_aid ON favor(uid, aid);
+
 CREATE TABLE IF NOT EXISTS favor_ablum(
     aid INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT,
@@ -52,14 +68,4 @@ CREATE TABLE IF NOT EXISTS favor_ablum(
     status INTEGER DEFAULT 0,
     create_time DATETIME DEFAULT CURRENT_TIMESTAMP,
     update_time DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS favor (
-    fid INTEGER PRIMARY KEY AUTOINCREMENT,
-    aid INTEGER,
-    uid INTEGER,
-    mid TEXT,
-    remark TEXT,
-    status INTEGER DEFAULT 0,
-    create_time DATETIME DEFAULT CURRENT_TIMESTAMP
 );
