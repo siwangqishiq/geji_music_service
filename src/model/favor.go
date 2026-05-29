@@ -12,3 +12,14 @@ type Favor struct {
 	CreateTime time.Time `json:"create_time,omitempty"`
 	UpdateTime time.Time `json:"update_time,omitempty"`
 }
+
+//
+type AddFavorReq struct {
+	Mid string `json:"mid" binding:"required"`
+	Fid int64  `json:"fid"`
+}
+
+//
+type RemoveFavorReq struct {
+	Fid int64 `json:"fid" binding:"required"`
+}

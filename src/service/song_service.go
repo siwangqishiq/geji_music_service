@@ -40,6 +40,15 @@ func (msvr *MusicService) loadMusicToCache() error {
 	return nil
 }
 
+func (msvr *MusicService) FindCacheMusicByMid(mid string) *model.Music {
+	music, exist := msvr.musicMap[mid]
+	if exist {
+		return music
+	}
+
+	return nil
+}
+
 func (msvr *MusicService) GetMusicDetailByMid(mid string) (*model.Music, error) {
 	if util.IsEmpty(mid) {
 		return nil, fmt.Errorf("mid is empty")

@@ -35,3 +35,26 @@ func QueryFavorListByAid(db *gorm.DB, uid int64, aid int64) ([]FavorModel, error
 
 	return list, err
 }
+
+func QueryFavorCountByUidAndMid(db *gorm.DB, uid int64, mid string) (int64, error) {
+	DbMutex.Lock()
+	defer DbMutex.Unlock()
+
+	var count int64 = 0
+	err := db.Model(&FavorModel{}).Where("uid = ? and mid = ?", uid, mid).Count(&count).Error
+	return count, err
+}
+
+func AddFavor(db *gorm.DB, uid int64, mid string, ablumId int64) (*FavorModel, error) {
+	var nowTime = time.Now()
+	var favor FavorModel = FavorModel{
+		Aid:        ablumId,
+		Uid:        uid,
+		Mid:        mid,
+		Sort:       0,
+		CreateTime: nowTime,
+		UpdateTime: nowTime,
+	}
+	err := db.Create(&favor).Error
+	return &favor, err
+}

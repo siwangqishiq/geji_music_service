@@ -58,7 +58,9 @@ func installApiRouter(r *gin.Engine) {
 	api.GET("/detail", controller.MusicDetail)    //查询详情
 	api.POST("/logout", controller.AccountLogout) //退出登录
 
-	api.GET("/favor", controller.GetFavor) //收藏查询
+	api.GET("/queryFavor", controller.GetFavorList)  //收藏查询列表
+	api.POST("/addFavor", controller.AddFavor)       //添加收藏
+	api.POST("/removeFavor", controller.RemoveFavor) //删除收藏
 
 	if config.IS_DEBUG {
 		api.GET("kvput", controller.KvCachePut)
