@@ -58,15 +58,16 @@ func installApiRouter(r *gin.Engine) {
 	api.GET("/detail", controller.MusicDetail)    //查询详情
 	api.POST("/logout", controller.AccountLogout) //退出登录
 
+	//收藏相关接口
 	api.GET("/queryFavor", controller.GetFavorList)  //收藏查询列表
 	api.POST("/addFavor", controller.AddFavor)       //添加收藏
 	api.POST("/removeFavor", controller.RemoveFavor) //删除收藏
 
-	if config.IS_DEBUG {
-		api.GET("kvput", controller.KvCachePut)
-		api.GET("kvget", controller.KvCacheGet)
-		api.GET("kvdel", controller.KvCacheDel)
-	}
+	// if config.IS_DEBUG {
+	// 	api.GET("kvput", controller.KvCachePut)
+	// 	api.GET("kvget", controller.KvCacheGet)
+	// 	api.GET("kvdel", controller.KvCacheDel)
+	// }
 }
 
 func InitRouter() *gin.Engine {

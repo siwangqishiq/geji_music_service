@@ -45,6 +45,21 @@ func QueryFavorCountByUidAndMid(db *gorm.DB, uid int64, mid string) (int64, erro
 	return count, err
 }
 
+func QueryFavorByFid(db *gorm.DB, fid int64) (*FavorModel, error) {
+	DbMutex.Lock()
+	defer DbMutex.Unlock()
+
+	var result FavorModel = FavorModel{}
+	err := db.Where("fid = ?", fid).First(&result).Error
+	return &result, err
+}
+
+func RemoveFavorByFid(db *gorm.DB, fid int64) error {
+	DbMutex.Lock()
+	defer DbMutex.Unlock()
+	return db.Delete(&FavorModel{}, "fid = ?", fid).Error
+}
+
 func AddFavor(db *gorm.DB, uid int64, mid string, ablumId int64) (*FavorModel, error) {
 	var nowTime = time.Now()
 	var favor FavorModel = FavorModel{

@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Music struct {
+type MusicModel struct {
 	ID          int64     `gorm:"column:id;primaryKey;autoIncrement"`
 	Mid         string    `gorm:"column:mid"`
 	Author      string    `gorm:"column:author"`
@@ -31,18 +31,18 @@ func init() {
 }
 
 // TableName 指定表名
-func (Music) TableName() string {
+func (MusicModel) TableName() string {
 	return "music"
 }
 
 // InsertMusic 插入音乐
-func (m *MusicDAO) InsertMusic(music *Music) error {
+func (m *MusicDAO) InsertMusic(music *MusicModel) error {
 	return DB.Create(music).Error
 }
 
 // QueryAllMusic 查询全部音乐
-func (m *MusicDAO) QueryAllMusic() ([]Music, error) {
-	var list []Music
+func (m *MusicDAO) QueryAllMusic() ([]MusicModel, error) {
+	var list []MusicModel
 	err := DB.Find(&list).Error
 	return list, err
 }

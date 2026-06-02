@@ -63,6 +63,10 @@ func RemoveFavor(c *gin.Context) {
 	}
 
 	uid := userClaims.Uid
-	aidStr := c.Query("aid")
-	util.Logi("GetFavor uid : %v aid:%v", uid, aidStr)
+	var req model.RemoveFavorReq
+	if err := c.ShouldBindJSON(&req); err != nil {
+		util.Fail(c, http.StatusBadRequest, "参数错误: 未传入fid")
+		return
+	}
+	service.FavorSvr.RemoveFavor(c, uid, req.Fid)
 }

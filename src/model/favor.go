@@ -11,6 +11,7 @@ type Favor struct {
 	Sort       int       `json:"sort,omitempty"`
 	CreateTime time.Time `json:"create_time,omitempty"`
 	UpdateTime time.Time `json:"update_time,omitempty"`
+	Music      Music     `json:"music,omitempty"`
 }
 
 //

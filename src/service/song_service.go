@@ -86,7 +86,7 @@ func (msvr *MusicService) GetMusicDetailByMid(mid string) (*model.Music, error) 
 		return nil, fmt.Errorf("下载资源失败 %s", detail.PlayURL)
 	}
 
-	var daoMusic dao.Music = dao.Music{
+	var daoMusic dao.MusicModel = dao.MusicModel{
 		Mid:         mid,
 		Author:      detail.Author,
 		Name:        detail.Title,

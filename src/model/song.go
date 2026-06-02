@@ -24,7 +24,7 @@ type Music struct {
 	Desc        string `json:"desc,omitempty"`
 }
 
-func DaoMusicToModel(music *dao.Music) Music {
+func DaoMusicToModel(music *dao.MusicModel) Music {
 	var url string = util.GetUrlFromLocalPath(music.LocalPath)
 	return Music{
 		Mid:         music.Mid,
