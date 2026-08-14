@@ -40,12 +40,12 @@ func (s *SpiderFangpiService) SpiderMusicDetail(id string) (*model.SongDetail, e
 	if err != nil {
 		return nil, err
 	}
-	songDetail, err := s.GetDetailFromHtml(htmlResp)
+	songDetail, err := s.GetDetailFromHtml(htmlResp, href)
 	songDetail.Href = href
 	return songDetail, err
 }
 
-func (s *SpiderFangpiService) GetDetailFromHtml(html string) (*model.SongDetail, error) {
+func (s *SpiderFangpiService) GetDetailFromHtml(html string, href string) (*model.SongDetail, error) {
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(html))
 	if err != nil {
 		return nil, err
@@ -76,16 +76,17 @@ func (s *SpiderFangpiService) GetDetailFromHtml(html string) (*model.SongDetail,
 	if songDetail == nil {
 		return nil, err
 	}
-	util.Logi("songDetail name:%v %v %v %v", songDetail.Title, songDetail.Author, songDetail.Cover, songDetail.DurSeconds)
+	util.Logi("songDetail info:%v %v %v %v", songDetail.Title, songDetail.Author, songDetail.Cover, songDetail.DurSeconds)
+	util.Logi("songDetail playId:%s", songDetail.PlayID)
 
-	playUrl := s.FetchPlayUrl(songDetail.PlayID)
+	playUrl := s.FetchPlayUrl(songDetail.PlayID, href)
 	util.Logi("fetch play url %s", playUrl)
 	songDetail.PlayURL = playUrl
 	return songDetail, nil
 }
 
-func (s *SpiderFangpiService) FetchPlayUrl(playId string) string {
-	rawResp, err := postForm(fmt.Sprintf("%s/api/play-url", FANGPI_URL), map[string]string{
+func (s *SpiderFangpiService) FetchPlayUrl(playId string, href string) string {
+	rawResp, err := postForm(fmt.Sprintf("%s/member/common-play-url", FANGPI_URL), href, map[string]string{
 		"id": playId,
 	})
 
@@ -106,7 +107,7 @@ func (s *SpiderFangpiService) FetchPlayUrl(playId string) string {
 	return resp.Data.URL
 }
 
-func postForm(urlStr string, params map[string]string) (string, error) {
+func postForm(urlStr string, referer string, params map[string]string) (string, error) {
 	data := url.Values{}
 	for k, v := range params {
 		data.Set(k, v)
@@ -117,9 +118,11 @@ func postForm(urlStr string, params map[string]string) (string, error) {
 		return "", err
 	}
 
-	// 设置 Header（对应 Kotlin）
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Content-Length", strconv.Itoa(len(data.Encode())))
+	req.Header.Set("Referer", "https://www.fangpi.net/music/67344")
+	req.Header.Set("Referer", referer)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36")
 
 	client := &http.Client{
 		Timeout: 45 * time.Second,
@@ -259,7 +262,7 @@ func (s *SpiderFangpiService) QueryFromFangpiWeb(query string) ([]model.Song, er
 }
 
 func (s *SpiderFangpiService) ParseQueryHtml(respHtml string) ([]model.Song, error) {
-	util.Logi("fetchhtml:%s", respHtml)
+	// util.Logi("fetchhtml:%s", respHtml)
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(respHtml))
 	if err != nil {
 		return nil, err
@@ -267,22 +270,13 @@ func (s *SpiderFangpiService) ParseQueryHtml(respHtml string) ([]model.Song, err
 
 	util.Logi("respHtml parse ...")
 
-	// 对应 getElementsByClass("col-8 col-content")
-	doc.Find(".col-8.col-content").Each(func(i int, s *goquery.Selection) {
-		html, _ := s.Html()
-		util.Logi("%d html : %s\n", i, html)
-	})
-
 	var songList []model.Song
-	// 对应:
-	// doc.getElementsByClass("card-body").first()?.getElementsByClass("row")
-	doc.Find(".card-body").First().Find(".row").Each(func(i int, row *goquery.Selection) {
-		song := s.fillSpiderSong(row)
+	doc.Find(".card-body .row.no-gutters.py-2d5.border-top.align-items-center").Each(func(i int, r *goquery.Selection) {
+		song := s.fillSpiderSong(r)
 		if song != nil {
 			songList = append(songList, *song)
 		}
 	})
-
 	util.Logi("respHtml parse end")
 	return songList, nil
 }
@@ -295,6 +289,7 @@ func (s *SpiderFangpiService) fillSpiderSong(row *goquery.Selection) *model.Song
 	author := strings.TrimSpace(row.Find("small").First().Text())
 	music := strings.TrimSpace(row.Find("span").First().Text())
 	href, _ := row.Find("a").First().Attr("href")
+	util.Logi("read song: author %s music %s href %s", author, music, href)
 
 	if author == "" || music == "" || href == "" {
 		return nil
